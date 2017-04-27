@@ -111,7 +111,7 @@ public struct Tree: ObjectType {
 		public let attributes: Int32
 
 		/// The object pointed to by the entry.
-		public let object: AnyPointer
+		public let object: Pointer
 
 		/// The file name of the entry.
 		public let name: String
@@ -125,7 +125,7 @@ public struct Tree: ObjectType {
 		}
 
 		/// Create an instance with the individual values.
-		public init(attributes: Int32, object: AnyPointer, name: String) {
+		public init(attributes: Int32, object: Pointer, name: String) {
 			self.attributes = attributes
 			self.object = object
 			self.name = name
@@ -208,7 +208,7 @@ public struct Tag: ObjectType {
 	public let oid: OID
 
 	/// The tagged object.
-	public let target: AnyPointer
+	public let target: Pointer
 
 	/// The name of the tag.
 	public let name: String
