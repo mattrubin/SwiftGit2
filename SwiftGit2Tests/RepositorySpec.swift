@@ -308,12 +308,12 @@ class RepositorySpec: QuickSpec {
 			}
 		}
 
-		describe("Repository.object(from: Pointer)") {
+		describe("Repository.object(from: AnyPointer)") {
 			it("should work with commits") {
 				let repo = Fixtures.simpleRepository
 				let oid = OID(string: "dc220a3f0c22920dab86d4a8d3a3cb7e69d6205a")!
 
-				let pointer = Pointer.commit(oid)
+				let pointer = AnyPointer.commit(oid)
 				let commit = repo.commit(oid).value!
 				let result = repo.object(from: pointer).map { $0 as! Commit }
 				expect(result).to(haveSucceeded(equal(commit)))
@@ -323,7 +323,7 @@ class RepositorySpec: QuickSpec {
 				let repo = Fixtures.simpleRepository
 				let oid = OID(string: "f93e3a1a1525fb5b91020da86e44810c87a2d7bc")!
 
-				let pointer = Pointer.tree(oid)
+				let pointer = AnyPointer.tree(oid)
 				let tree = repo.tree(oid).value!
 				let result = repo.object(from: pointer).map { $0 as! Tree }
 				expect(result).to(haveSucceeded(equal(tree)))
@@ -333,7 +333,7 @@ class RepositorySpec: QuickSpec {
 				let repo = Fixtures.simpleRepository
 				let oid = OID(string: "41078396f5187daed5f673e4a13b185bbad71fba")!
 
-				let pointer = Pointer.blob(oid)
+				let pointer = AnyPointer.blob(oid)
 				let blob = repo.blob(oid).value!
 				let result = repo.object(from: pointer).map { $0 as! Blob }
 				expect(result).to(haveSucceeded(equal(blob)))
@@ -343,7 +343,7 @@ class RepositorySpec: QuickSpec {
 				let repo = Fixtures.simpleRepository
 				let oid = OID(string: "57943b8ee00348180ceeedc960451562750f6d33")!
 
-				let pointer = Pointer.tag(oid)
+				let pointer = AnyPointer.tag(oid)
 				let tag = repo.tag(oid).value!
 				let result = repo.object(from: pointer).map { $0 as! Tag }
 				expect(result).to(haveSucceeded(equal(tag)))

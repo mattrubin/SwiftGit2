@@ -17,16 +17,6 @@ public protocol Pointer {
 	var type: git_otype { get }
 }
 
-public func == (lhs: Pointer, rhs: Pointer) -> Bool {
-	return lhs.oid == rhs.oid && lhs.type == rhs.type
-}
-
-extension Pointer {
-	public var hashValue: Int {
-		return oid.hashValue
-	}
-}
-
 /// A pointer to a git object.
 public enum AnyPointer: Pointer {
 	case commit(OID)
