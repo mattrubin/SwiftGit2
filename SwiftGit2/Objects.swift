@@ -111,7 +111,7 @@ public struct Tree: ObjectType {
 		public let attributes: Int32
 
 		/// The object pointed to by the entry.
-		public let object: Pointer
+		public let object: AnyPointer
 
 		/// The file name of the entry.
 		public let name: String
@@ -120,12 +120,12 @@ public struct Tree: ObjectType {
 		public init(_ pointer: OpaquePointer) {
 			let oid = OID(git_tree_entry_id(pointer).pointee)
 			attributes = Int32(git_tree_entry_filemode(pointer).rawValue)
-			object = Pointer(oid: oid, type: git_tree_entry_type(pointer))!
+			object = AnyPointer(oid: oid, type: git_tree_entry_type(pointer))!
 			name = String(validatingUTF8: git_tree_entry_name(pointer))!
 		}
 
 		/// Create an instance with the individual values.
-		public init(attributes: Int32, object: Pointer, name: String) {
+		public init(attributes: Int32, object: AnyPointer, name: String) {
 			self.attributes = attributes
 			self.object = object
 			self.name = name
@@ -208,7 +208,7 @@ public struct Tag: ObjectType {
 	public let oid: OID
 
 	/// The tagged object.
-	public let target: Pointer
+	public let target: AnyPointer
 
 	/// The name of the tag.
 	public let name: String
@@ -223,7 +223,7 @@ public struct Tag: ObjectType {
 	public init(_ pointer: OpaquePointer) {
 		oid = OID(git_object_id(pointer).pointee)
 		let targetOID = OID(git_tag_target_id(pointer).pointee)
-		target = Pointer(oid: targetOID, type: git_tag_target_type(pointer))!
+		target = AnyPointer(oid: targetOID, type: git_tag_target_type(pointer))!
 		name = String(validatingUTF8: git_tag_name(pointer))!
 		tagger = Signature(git_tag_tagger(pointer).pointee)
 		message = String(validatingUTF8: git_tag_message(pointer))!

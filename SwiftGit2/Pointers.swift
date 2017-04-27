@@ -9,7 +9,7 @@
 import libgit2
 
 /// A pointer to a git object.
-public protocol PointerType: Equatable, Hashable {
+public protocol PointerType {
 	/// The OID of the referenced object.
 	var oid: OID { get }
 
@@ -17,12 +17,8 @@ public protocol PointerType: Equatable, Hashable {
 	var type: git_otype { get }
 }
 
-public func == <P: PointerType>(lhs: P, rhs: P) -> Bool {
-	return lhs.oid == rhs.oid && lhs.type.rawValue == rhs.type.rawValue
-}
-
 /// A pointer to a git object.
-public enum Pointer: PointerType {
+public enum AnyPointer: PointerType {
 	case commit(OID)
 	case tree(OID)
 	case blob(OID)
@@ -71,13 +67,19 @@ public enum Pointer: PointerType {
 	}
 }
 
-extension Pointer: Hashable {
+extension AnyPointer: Equatable {
+	public static func == (lhs: AnyPointer, rhs: AnyPointer) -> Bool {
+		return lhs.oid == rhs.oid && lhs.type == rhs.type
+	}
+}
+
+extension AnyPointer: Hashable {
 	public var hashValue: Int {
 		return oid.hashValue
 	}
 }
 
-extension Pointer: CustomStringConvertible {
+extension AnyPointer: CustomStringConvertible {
 	public var description: String {
 		switch self {
 		case .commit:
@@ -101,6 +103,12 @@ public struct PointerTo<T: ObjectType>: PointerType {
 
 	public init(_ oid: OID) {
 		self.oid = oid
+	}
+}
+
+extension PointerTo: Equatable {
+	public static func == (lhs: PointerTo, rhs: PointerTo) -> Bool {
+		return lhs.oid == rhs.oid
 	}
 }
 

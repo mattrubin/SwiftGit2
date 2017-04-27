@@ -285,7 +285,7 @@ final public class Repository {
 	/// pointer - A pointer to an object.
 	///
 	/// Returns the object if it exists, or an error.
-	public func object(from pointer: Pointer) -> Result<ObjectType, NSError> {
+	public func object(from pointer: AnyPointer) -> Result<ObjectType, NSError> {
 		switch pointer {
 		case let .blob(oid):
 			return blob(oid).map { $0 as ObjectType }
