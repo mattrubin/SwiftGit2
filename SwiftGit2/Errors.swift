@@ -9,6 +9,24 @@ public struct GitError: CustomNSError {
 	public let type: git_error_t?
 	public let pointOfFailure: String?
 
+	/// Returns a GitError representing the libgit2 error with the given error code.
+	///
+	/// - parameter code: An error code returned by a libgit2 function.
+	/// - parameter pointOfFailure: The name of the libgit2 function that produced the error code.
+	/// - returns: A GitError with a libgit2 error code and message.
+	internal init(code: git_error_code, pointOfFailure: String? = nil) {
+		self.code = code
+		self.pointOfFailure = pointOfFailure
+
+		if let lastErrorPointer = giterr_last() {
+			message = String(validatingUTF8: lastErrorPointer.pointee.message)
+			type = git_error_t(UInt32(lastErrorPointer.pointee.klass))
+		} else {
+			message = nil
+			type = nil
+		}
+	}
+
 	public var userInfo: [String : String] {
 		var userInfo: [String: String] = [:]
 
@@ -23,26 +41,5 @@ public struct GitError: CustomNSError {
 		}
 
 		return userInfo
-	}
-}
-
-internal extension GitError {
-	/// Returns an NSError with an error domain and message for libgit2 errors.
-	///
-	/// :param: errorCode An error code returned by a libgit2 function.
-	/// :param: libGit2PointOfFailure The name of the libgit2 function that produced the
-	///         error code.
-	/// :returns: An NSError with a libgit2 error domain, code, and message.
-	internal init(code: git_error_code, pointOfFailure: String? = nil) {
-		self.code = code
-		self.pointOfFailure = pointOfFailure
-
-		if let lastErrorPointer = giterr_last() {
-			message = String(validatingUTF8: lastErrorPointer.pointee.message)
-			type = git_error_t(UInt32(lastErrorPointer.pointee.klass))
-		} else {
-			message = nil
-			type = nil
-		}
 	}
 }
