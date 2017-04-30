@@ -6,6 +6,7 @@ public let libGit2ErrorDomain = "org.libgit2.libgit2"
 public struct GitError: CustomNSError {
 	public let code: git_error_code
 	public let message: String?
+	public let type: git_error_t?
 	public let pointOfFailure: String?
 
 	public var userInfo: [String : String] {
@@ -38,8 +39,10 @@ internal extension GitError {
 
 		if let lastErrorPointer = giterr_last() {
 			message = String(validatingUTF8: lastErrorPointer.pointee.message)
+			type = git_error_t(UInt32(lastErrorPointer.pointee.klass))
 		} else {
 			message = nil
+			type = nil
 		}
 	}
 }
