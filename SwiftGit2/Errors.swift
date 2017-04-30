@@ -3,7 +3,7 @@ import libgit2
 
 public let libGit2ErrorDomain = "org.libgit2.libgit2"
 
-public struct GitError: CustomNSError {
+public struct GitError: Error {
 	public let code: git_error_code
 	public let message: String?
 	public let type: git_error_t?
@@ -26,8 +26,16 @@ public struct GitError: CustomNSError {
 			type = nil
 		}
 	}
+}
 
-	public var userInfo: [String : String] {
+extension GitError: CustomNSError {
+	public static let errorDomain = libGit2ErrorDomain
+
+	public var errorCode: Int {
+		return Int(code.rawValue)
+	}
+
+	public var errorUserInfo: [String : Any] {
 		var userInfo: [String: String] = [:]
 
 		if let message = message {
