@@ -25,6 +25,12 @@ private extension Result where Error == Repository.Error {
 	}
 }
 
+private extension Result where Error == GitError {
+	func withNSError() -> Result<T, NSError> {
+		return self.mapError({ $0 as NSError })
+	}
+}
+
 class RepositorySpec: QuickSpec {
 	override func spec() {
 		describe("Repository.Type.at(_:)") {
