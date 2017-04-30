@@ -3,22 +3,20 @@ import libgit2
 
 public let libGit2ErrorDomain = "org.libgit2.libgit2"
 
-public struct GitError {
-	internal let error: NSError
-
-	internal init(gitError errorCode: Int32, pointOfFailure: String? = nil) {
-		error = NSError(gitError: errorCode, pointOfFailure: pointOfFailure)
-	}
+public struct GitError: CustomNSError {
+	public let domain: String
+	public let code: Int
+	public let userInfo: [String : String]
 }
 
-internal extension NSError {
+internal extension GitError {
 	/// Returns an NSError with an error domain and message for libgit2 errors.
 	///
 	/// :param: errorCode An error code returned by a libgit2 function.
 	/// :param: libGit2PointOfFailure The name of the libgit2 function that produced the
 	///         error code.
 	/// :returns: An NSError with a libgit2 error domain, code, and message.
-	fileprivate convenience init(gitError errorCode: Int32, pointOfFailure: String? = nil) {
+	internal init(gitError errorCode: Int32, pointOfFailure: String? = nil) {
 		let code = Int(errorCode)
 		var userInfo: [String: String] = [:]
 

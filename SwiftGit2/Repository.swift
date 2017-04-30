@@ -114,7 +114,7 @@ final public class Repository {
 		public var errorCode: Int {
 			switch self {
 			case .git(let error):
-				return error.error.code
+				return error.code
 			case .swiftGit2(let error):
 				return error.code
 			}
@@ -123,7 +123,7 @@ final public class Repository {
 		public var errorUserInfo: [String : Any] {
 			switch self {
 			case .git(let error):
-				return error.error.userInfo as! [String : Any]
+				return error.userInfo
 			case .swiftGit2(let error):
 				return error.userInfo as! [String : Any]
 			}
