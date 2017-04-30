@@ -101,7 +101,7 @@ final public class Repository {
 		case git(GitError)
 		case swiftGit2(NSError)
 
-		static func gitError(code: git_error_code, pointOfFailure: String? = nil) -> Error {
+		static func gitError(code: git_error_code, pointOfFailure: String) -> Error {
 			return .git(GitError(code: code, pointOfFailure: pointOfFailure))
 		}
 	}

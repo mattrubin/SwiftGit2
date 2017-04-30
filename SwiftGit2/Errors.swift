@@ -7,14 +7,15 @@ public struct GitError: Error {
 	public let code: git_error_code
 	public let message: String?
 	public let type: git_error_t?
-	public let pointOfFailure: String?
+
+	public let pointOfFailure: String
 
 	/// Returns a GitError representing the libgit2 error with the given error code.
 	///
 	/// - parameter code: An error code returned by a libgit2 function.
 	/// - parameter pointOfFailure: The name of the libgit2 function that produced the error code.
 	/// - returns: A GitError with a libgit2 error code and message.
-	internal init(code: git_error_code, pointOfFailure: String? = nil) {
+	internal init(code: git_error_code, pointOfFailure: String) {
 		self.code = code
 		self.pointOfFailure = pointOfFailure
 
@@ -34,9 +35,6 @@ extension GitError: LocalizedError {
 	}
 
 	public var failureReason: String? {
-		guard let pointOfFailure = pointOfFailure else {
-			return nil
-		}
 		return "\(pointOfFailure) failed."
 	}
 }
