@@ -100,10 +100,6 @@ final public class Repository {
 	public enum Error: Swift.Error {
 		case git(GitError)
 		case swiftGit2(NSError)
-
-		static func gitError(code: git_error_code, pointOfFailure: String) -> Error {
-			return .git(GitError(code: code, pointOfFailure: pointOfFailure))
-		}
 	}
 
 	// MARK: - Creating Repositories
@@ -203,7 +199,7 @@ final public class Repository {
 		let result = git_object_lookup(&pointer, self.pointer, &oid, type)
 
 		guard result == GIT_OK.rawValue else {
-			return Result.failure(.gitError(code: git_error_code(rawValue: result), pointOfFailure: "git_object_lookup"))
+			return Result.failure(.git(GitError(code: git_error_code(rawValue: result), pointOfFailure: "git_object_lookup")))
 		}
 
 		let value = transform(pointer!)
