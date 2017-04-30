@@ -28,6 +28,19 @@ public struct GitError: Error {
 	}
 }
 
+extension GitError: LocalizedError {
+	public var errorDescription: String? {
+		return message ?? "Unknown libgit2 error."
+	}
+
+	public var failureReason: String? {
+		guard let pointOfFailure = pointOfFailure else {
+			return nil
+		}
+		return "\(pointOfFailure) failed."
+	}
+}
+
 extension GitError: CustomNSError {
 	public static let errorDomain = libGit2ErrorDomain
 
@@ -37,17 +50,8 @@ extension GitError: CustomNSError {
 
 	public var errorUserInfo: [String : Any] {
 		var userInfo: [String: String] = [:]
-
-		if let message = message {
-			userInfo[NSLocalizedDescriptionKey] = message
-		} else {
-			userInfo[NSLocalizedDescriptionKey] = "Unknown libgit2 error."
-		}
-
-		if let pointOfFailure = pointOfFailure {
-			userInfo[NSLocalizedFailureReasonErrorKey] = "\(pointOfFailure) failed."
-		}
-
+		userInfo[NSLocalizedDescriptionKey] = errorDescription
+		userInfo[NSLocalizedFailureReasonErrorKey] = failureReason
 		return userInfo
 	}
 }
