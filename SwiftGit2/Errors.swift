@@ -5,7 +5,7 @@ public let libGit2ErrorDomain = "org.libgit2.libgit2"
 
 public struct GitError: CustomNSError {
 	public let domain: String
-	public let code: Int
+	public let code: git_error_code
 	public let userInfo: [String : String]
 }
 
@@ -16,11 +16,10 @@ internal extension GitError {
 	/// :param: libGit2PointOfFailure The name of the libgit2 function that produced the
 	///         error code.
 	/// :returns: An NSError with a libgit2 error domain, code, and message.
-	internal init(gitError errorCode: Int32, pointOfFailure: String? = nil) {
-		let code = Int(errorCode)
+	internal init(code: git_error_code, pointOfFailure: String? = nil) {
 		var userInfo: [String: String] = [:]
 
-		if let message = errorMessage(errorCode) {
+		if let message = errorMessage(for: code) {
 			userInfo[NSLocalizedDescriptionKey] = message
 		} else {
 			userInfo[NSLocalizedDescriptionKey] = "Unknown libgit2 error."
@@ -44,11 +43,11 @@ internal extension GitError {
 ///           or errno has been set by the system, this function returns the
 ///           corresponding string representation of that error. Otherwise, it returns
 ///           nil.
-private func errorMessage(_ errorCode: Int32) -> String? {
+private func errorMessage(for code: git_error_code) -> String? {
 	let last = giterr_last()
 	if let lastErrorPointer = last {
 		return String(validatingUTF8: lastErrorPointer.pointee.message)
-	} else if UInt32(errorCode) == GITERR_OS.rawValue {
+	} else if UInt32(code.rawValue) == GITERR_OS.rawValue {
 		return String(validatingUTF8: strerror(errno))
 	} else {
 		return nil
