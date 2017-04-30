@@ -12,6 +12,12 @@ import Nimble
 import Quick
 import Guanaco
 
+private extension Result where Error == Repository.Error {
+	func withNSError() -> Result<T, NSError> {
+		return self.mapError({ $0 as NSError })
+	}
+}
+
 class RepositorySpec: QuickSpec {
 	override func spec() {
 		describe("Repository.Type.at(_:)") {
@@ -23,7 +29,7 @@ class RepositorySpec: QuickSpec {
 			it("should fail if the repo doesn't exist") {
 				let url = URL(fileURLWithPath: "blah")
 				let result = Repository.at(url)
-				expect(result).to(haveFailed(beAnError(
+				expect(result.withNSError()).to(haveFailed(beAnError(
 					domain: equal(libGit2ErrorDomain),
 					localizedDescription: match("Failed to resolve path")
 				)))
@@ -135,7 +141,7 @@ class RepositorySpec: QuickSpec {
 				let oid = OID(string: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")!
 
 				let result = repo.blob(oid)
-				expect(result).to(haveFailed(beAnError(domain: equal(libGit2ErrorDomain))))
+				expect(result.withNSError()).to(haveFailed(beAnError(domain: equal(libGit2ErrorDomain))))
 			}
 
 			it("should error if the oid doesn't point to a blob") {
@@ -144,7 +150,7 @@ class RepositorySpec: QuickSpec {
 				let oid = OID(string: "f93e3a1a1525fb5b91020da86e44810c87a2d7bc")!
 
 				let result = repo.blob(oid)
-				expect(result).to(haveFailed())
+				expect(result.withNSError()).to(haveFailed())
 			}
 		}
 
@@ -162,7 +168,7 @@ class RepositorySpec: QuickSpec {
 				let oid = OID(string: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")!
 
 				let result = repo.commit(oid)
-				expect(result).to(haveFailed(beAnError(domain: equal(libGit2ErrorDomain))))
+				expect(result.withNSError()).to(haveFailed(beAnError(domain: equal(libGit2ErrorDomain))))
 			}
 
 			it("should error if the oid doesn't point to a commit") {
@@ -171,7 +177,7 @@ class RepositorySpec: QuickSpec {
 				let oid = OID(string: "f93e3a1a1525fb5b91020da86e44810c87a2d7bc")!
 
 				let result = repo.commit(oid)
-				expect(result).to(haveFailed(beAnError(domain: equal(libGit2ErrorDomain))))
+				expect(result.withNSError()).to(haveFailed(beAnError(domain: equal(libGit2ErrorDomain))))
 			}
 		}
 
@@ -189,7 +195,7 @@ class RepositorySpec: QuickSpec {
 				let oid = OID(string: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")!
 
 				let result = repo.tag(oid)
-				expect(result).to(haveFailed(beAnError(domain: equal(libGit2ErrorDomain))))
+				expect(result.withNSError()).to(haveFailed(beAnError(domain: equal(libGit2ErrorDomain))))
 			}
 
 			it("should error if the oid doesn't point to a tag") {
@@ -198,7 +204,7 @@ class RepositorySpec: QuickSpec {
 				let oid = OID(string: "dc220a3f0c22920dab86d4a8d3a3cb7e69d6205a")!
 
 				let result = repo.tag(oid)
-				expect(result).to(haveFailed(beAnError(domain: equal(libGit2ErrorDomain))))
+				expect(result.withNSError()).to(haveFailed(beAnError(domain: equal(libGit2ErrorDomain))))
 			}
 		}
 
@@ -216,7 +222,7 @@ class RepositorySpec: QuickSpec {
 				let oid = OID(string: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")!
 
 				let result = repo.tree(oid)
-				expect(result).to(haveFailed(beAnError(domain: equal(libGit2ErrorDomain))))
+				expect(result.withNSError()).to(haveFailed(beAnError(domain: equal(libGit2ErrorDomain))))
 			}
 
 			it("should error if the oid doesn't point to a tree") {
@@ -225,7 +231,7 @@ class RepositorySpec: QuickSpec {
 				let oid = OID(string: "dc220a3f0c22920dab86d4a8d3a3cb7e69d6205a")!
 
 				let result = repo.tree(oid)
-				expect(result).to(haveFailed(beAnError(domain: equal(libGit2ErrorDomain))))
+				expect(result.withNSError()).to(haveFailed(beAnError(domain: equal(libGit2ErrorDomain))))
 			}
 		}
 
@@ -266,7 +272,7 @@ class RepositorySpec: QuickSpec {
 				let repo   = Fixtures.simpleRepository
 				let oid    = OID(string: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")!
 				let result = repo.object(oid)
-				expect(result).to(haveFailed(beAnError(domain: equal(libGit2ErrorDomain))))
+				expect(result.withNSError()).to(haveFailed(beAnError(domain: equal(libGit2ErrorDomain))))
 			}
 		}
 
@@ -376,7 +382,7 @@ class RepositorySpec: QuickSpec {
 			it("should error if the remote doesn't exist") {
 				let repo = Fixtures.simpleRepository
 				let result = repo.remote(named: "nonexistent")
-				expect(result).to(haveFailed(beAnError(domain: equal(libGit2ErrorDomain))))
+				expect(result.withNSError()).to(haveFailed(beAnError(domain: equal(libGit2ErrorDomain))))
 			}
 		}
 
@@ -410,7 +416,7 @@ class RepositorySpec: QuickSpec {
 
 			it("should error if the reference doesn't exist") {
 				let result = Fixtures.simpleRepository.reference(named: "refs/heads/nonexistent")
-				expect(result).to(haveFailed(beAnError(domain: equal(libGit2ErrorDomain))))
+				expect(result.withNSError()).to(haveFailed(beAnError(domain: equal(libGit2ErrorDomain))))
 			}
 		}
 
@@ -465,7 +471,7 @@ class RepositorySpec: QuickSpec {
 
 			it("should error if the branch doesn't exists") {
 				let result = Fixtures.simpleRepository.localBranch(named: "nonexistent")
-				expect(result).to(haveFailed(beAnError(domain: equal(libGit2ErrorDomain))))
+				expect(result.withNSError()).to(haveFailed(beAnError(domain: equal(libGit2ErrorDomain))))
 			}
 		}
 
@@ -477,7 +483,7 @@ class RepositorySpec: QuickSpec {
 
 			it("should error if the branch doesn't exists") {
 				let result = Fixtures.simpleRepository.remoteBranch(named: "origin/nonexistent")
-				expect(result).to(haveFailed(beAnError(domain: equal(libGit2ErrorDomain))))
+				expect(result.withNSError()).to(haveFailed(beAnError(domain: equal(libGit2ErrorDomain))))
 			}
 		}
 
@@ -500,7 +506,7 @@ class RepositorySpec: QuickSpec {
 
 			it("should error if the branch doesn't exists") {
 				let result = Fixtures.simpleRepository.tag(named: "nonexistent")
-				expect(result).to(haveFailed(beAnError(domain: equal(libGit2ErrorDomain))))
+				expect(result.withNSError()).to(haveFailed(beAnError(domain: equal(libGit2ErrorDomain))))
 			}
 		}
 
