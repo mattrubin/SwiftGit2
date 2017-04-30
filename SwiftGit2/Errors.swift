@@ -7,8 +7,23 @@ public struct GitError: CustomNSError {
 	public let domain: String
 	public let code: git_error_code
 	public let message: String?
+	public let pointOfFailure: String?
 
-	public let userInfo: [String : String]
+	public var userInfo: [String : String] {
+		var userInfo: [String: String] = [:]
+
+		if let message = message {
+			userInfo[NSLocalizedDescriptionKey] = message
+		} else {
+			userInfo[NSLocalizedDescriptionKey] = "Unknown libgit2 error."
+		}
+
+		if let pointOfFailure = pointOfFailure {
+			userInfo[NSLocalizedFailureReasonErrorKey] = "\(pointOfFailure) failed."
+		}
+
+		return userInfo
+	}
 }
 
 internal extension GitError {
@@ -27,18 +42,6 @@ internal extension GitError {
 			message = nil
 		}
 
-		var userInfo: [String: String] = [:]
-
-		if let message = message {
-			userInfo[NSLocalizedDescriptionKey] = message
-		} else {
-			userInfo[NSLocalizedDescriptionKey] = "Unknown libgit2 error."
-		}
-
-		if let pointOfFailure = pointOfFailure {
-			userInfo[NSLocalizedFailureReasonErrorKey] = "\(pointOfFailure) failed."
-		}
-
-		self.init(domain: libGit2ErrorDomain, code: code, message: message, userInfo: userInfo)
+		self.init(domain: libGit2ErrorDomain, code: code, message: message, pointOfFailure: pointOfFailure)
 	}
 }
