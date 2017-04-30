@@ -97,36 +97,12 @@ private func cloneOptions(bare: Bool = false, localClone: Bool = false, fetchOpt
 /// A git repository.
 final public class Repository {
 
-	public enum Error: CustomNSError {
+	public enum Error: Swift.Error {
 		case git(GitError)
 		case swiftGit2(NSError)
 
 		static func gitError(code: git_error_code, pointOfFailure: String? = nil) -> Error {
 			return .git(GitError(code: code, pointOfFailure: pointOfFailure))
-		}
-
-		// FIXME: CustomNSError is currently used just as a shim to keep the tests from breaking.
-
-		public static var errorDomain: String {
-			return libGit2ErrorDomain
-		}
-
-		public var errorCode: Int {
-			switch self {
-			case .git(let error):
-				return error.errorCode
-			case .swiftGit2(let error):
-				return error.code
-			}
-		}
-
-		public var errorUserInfo: [String : Any] {
-			switch self {
-			case .git(let error):
-				return error.errorUserInfo
-			case .swiftGit2(let error):
-				return error.userInfo as! [String : Any]
-			}
 		}
 	}
 

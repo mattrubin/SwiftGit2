@@ -14,7 +14,14 @@ import Guanaco
 
 private extension Result where Error == Repository.Error {
 	func withNSError() -> Result<T, NSError> {
-		return self.mapError({ $0 as NSError })
+		return self.mapError({
+			switch $0 {
+			case .git(let error):
+				return error as NSError
+			case .swiftGit2(let error):
+				return error
+			}
+		})
 	}
 }
 
