@@ -47,8 +47,6 @@ private func errorMessage(for code: git_error_code) -> String? {
 	let last = giterr_last()
 	if let lastErrorPointer = last {
 		return String(validatingUTF8: lastErrorPointer.pointee.message)
-	} else if UInt32(code.rawValue) == GITERR_OS.rawValue {
-		return String(validatingUTF8: strerror(errno))
 	} else {
 		return nil
 	}
