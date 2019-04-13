@@ -63,8 +63,6 @@ public struct Diff {
 	}
 
 	public struct Status: OptionSet {
-		// This appears to be necessary due to bug in Swift
-		// https://bugs.swift.org/browse/SR-3003
 		public init(rawValue: UInt32) {
 			self.rawValue = rawValue
 		}
@@ -87,8 +85,6 @@ public struct Diff {
 	}
 
 	public struct Flags: OptionSet {
-		// This appears to be necessary due to bug in Swift
-		// https://bugs.swift.org/browse/SR-3003
 		public init(rawValue: UInt32) {
 			self.rawValue = rawValue
 		}
