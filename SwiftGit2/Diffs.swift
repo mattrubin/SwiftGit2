@@ -93,15 +93,20 @@ public struct Diff {
 	}
 
 	public struct Flags: OptionSet {
+		public let rawValue: UInt32
+
 		public init(rawValue: UInt32) {
 			self.rawValue = rawValue
 		}
-		public let rawValue: UInt32
 
-		public static let binary     = Flags(rawValue: 0)
-		public static let notBinary  = Flags(rawValue: 1 << 0)
-		public static let validId    = Flags(rawValue: 1 << 1)
-		public static let exists     = Flags(rawValue: 1 << 2)
+		public init(_ flags: git_diff_flag_t) {
+			self.rawValue = flags.rawValue
+		}
+
+		public static let binary     = Flags(GIT_DIFF_FLAG_BINARY)
+		public static let notBinary  = Flags(GIT_DIFF_FLAG_NOT_BINARY)
+		public static let validId    = Flags(GIT_DIFF_FLAG_VALID_ID)
+		public static let exists     = Flags(GIT_DIFF_FLAG_EXISTS)
 	}
 
 	/// Create an instance with a libgit2 `git_diff`.
